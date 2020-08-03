@@ -1,0 +1,12 @@
+{"properties": [
+  {
+    "name": "num.days.data",
+    "type": "java.lang.String",
+    "description": "A description for 'num.days.data'"
+  },
+  {
+    "name": "data.folder",
+    "type": "java.lang.String",
+    "description": "A description for 'data.folder'"
+  }
+]}
