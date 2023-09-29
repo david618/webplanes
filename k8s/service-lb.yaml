@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webplanes-lb
+  namespace: simulators
+  labels:
+    app: webplanes
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+  selector:
+    app: webplanes
+  type: LoadBalancer
