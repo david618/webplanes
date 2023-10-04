@@ -2,24 +2,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: webplanes
+  name: webplanes-load
   labels:
-    app: webplanes
+    app: webplanes-load
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: webplanes
+      app: webplanes-load
   template:
     metadata:
       labels:
-        app: webplanes
+        app: webplanes-load
     spec:
       containers:
-        - name: webplanes
-          image: david62243/webplanes:v1.0
-          #command: ["sleep", "3650d"]
-          command: ["java", "-jar", "-DPLANES_NUM_DAYS_DATA=16", "-DPLANES_PATH_TO_DATA=/data/", "-Dserver.port=8080", "/opt/webplanes/webplanes-0.0.1-SNAPSHOT.jar"]
+        - name: webplanes-load
+          image: david62243/webplanes:v2.0
+          command: ["sleep", "3650d"]
           imagePullPolicy: Always
           resources:
             limits:

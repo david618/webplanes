@@ -1,14 +1,41 @@
 
+# webplanes
+
+## Command used on old server 
 
 ```
 java -jar -DPLANES_NUM_DAYS_DATA=16 -DPLANES_PATH_TO_DATA=/s3/esriplanes/lat88_csv3/ -Dserver.servlet.context-path=/webplanes -Dserver.port=8081 target/webplanes-0.0.1-SNAPSHOT.jar
+```
 
+
+## Build webplanes
+
+```
+./build.sh 
+```
+
+```
+docker build -t david62243/webplanes:v2.0 .
+docker push david62243/webplanes:v2.0
+```
+
+## Set Context
+
+```
+export KUBECONFIG=/users/davi5017/simulators-vel2023.kubeconfig
+```
+
+## Create namespace
+
+```
+NAMESPACE=webplanes
+kubectl create ns ${NAMESPACE}
 ```
 
 ## Create pvc
 
 ```
-kubectl apply -f webplanes/pvc.yaml
+kubectl -n ${NAMESPACE} apply -f k8s/pvc.yaml
 ```
 
 PVC uses azurefile-premium to allow RWM access.  I can have many pods attach to this pvc. 
@@ -18,11 +45,11 @@ PVC uses azurefile-premium to allow RWM access.  I can have many pods attach to 
 Create Ubuntu Deployment with pvc mounted
 
 ```
-kubectl apply -f webplanes/ubuntu-deployment.yaml
+kubectl -n ${NAMESPACE} apply -f k8s/load-deployment.yaml 
 ```
 
 ```
-kubectl -n simulators exec -it ubuntu-55df74fb8c-2x2vt -- bash
+kubectl -n webplanes exec -it webplanes-74bf8b5f45-p55ss -- bash
 ```
 
 ```
@@ -59,24 +86,73 @@ done
 ```
 
 ```
-for i in {2..6}; do
-  tar xvzf day${i}.tgz
-done
-```
-
-
-```
+tar xvzf day0.tgz > day0.log 2>&1 &
+tar xvzf day1.tgz > day1.log 2>&1 &
 tar xvzf day2.tgz > day2.log 2>&1 &
 tar xvzf day3.tgz > day3.log 2>&1 &
 ```
 
+Unpacking the gzip is very slow.  The first 20% only took about 30 minutes; but as more data loads the unpacking took longer and longer.  It took over 8 hours to unarchive this code.  
+
+I tried azcopy; however, I wasn't able to successfully copy the files. 
+
+I'm also not thrilled with the disk i/o for Azure's file.csi.azure.com provisioner. 
+
+Thinking we could try k3s and just use an NFS Share and HostPath.  The a standard volume we should be able to mount easily. 
+
+### Start webplanes with 4 days of data
 
 ```
-java -jar -DPLANES_NUM_DAYS_DATA=7 -DPLANES_PATH_TO_DATA=/data/lat88_csv3/ -Dserver.port=8080 /opt/webplanes/webplanes-0.0.1-SNAPSHOT.jar
+java -jar -DPLANES_NUM_DAYS_DATA=3 -DPLANES_PATH_TO_DATA=/data/lat88_csv3/ -Dserver.port=8080 /opt/webplanes/webplanes-0.0.1-SNAPSHOT.jar
 ```
 
 
 ## Set DNS 
 
+Found the Public IP in the MC Resource Group and set the DNS name label to webplanes. 
+
 http://webplanes.westus2.cloudapp.azure.com/
+
+
+
+```
+tar xvzf day4.tgz > day4.log 2>&1 &
+tar xvzf day5.tgz > day5.log 2>&1 &
+tar xvzf day6.tgz > day6.log 2>&1 &
+tar xvzf day7.tgz > day7.log 2>&1 &
+```
+
+
+```
+tar xvzf day8.tgz > day8.log 2>&1 &
+tar xvzf day9.tgz > day9.log 2>&1 &
+tar xvzf day10.tgz > day10.log 2>&1 &
+tar xvzf day11.tgz > day11.log 2>&1 &
+```
+
+```
+tar xvzf day12.tgz > day12.log 2>&1 &
+tar xvzf day13.tgz > day13.log 2>&1 &
+tar xvzf day14.tgz > day15.log 2>&1 &
+tar xvzf day15.tgz > day15.log 2>&1 &
+tar xvzf day16.tgz > day16.log 2>&1 &
+```
+
+The slow unzip is partly because of throttling. 
+
+I updated the disk from 512G to 4096G (4T).  Once the data is loaded we can scale the Storage Account back down to 512G.
+
+After loading data I changed size back to 512G. 
+
+https://learn.microsoft.com/en-us/troubleshoot/azure/azure-storage/files-troubleshoot-performance?tabs=windows
+
+## velocitysimdata Storage Account
+
+Created a new Storage Account velocitysimdata in a4iotworkspace RG of subscription 844b25fe-7752-4bbd-ba37-ad545aa62be0
+
+Create a webplanes fileshare in the Storage Account.
+
+Used Microsoft Azure Storage Explorer to copy files from the pvc.
+
+Next time instead of downloading from s3 and unzipping; we should be able to just copy from this Storage Account to the Storage account pvc folder. 
 
