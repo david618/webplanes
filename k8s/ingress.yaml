@@ -1,21 +1,25 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: websats
+  name: webplanes
+  namespace: webplanes
+  annotations: #{}
+    cert-manager.io/issuer: "letsencrypt-prod"
+    acme.cert-manager.io/http01-edit-in-place: "true"
 spec:
-  defaultBackend:
-    service:
-      name: websats
-      port:
-        number: 80
+  ingressClassName: webplanes
+  tls:
+  - hosts:
+    - webplanes.westus2.cloudapp.azure.com
+    secretName: webplanes-tls
   rules:
-    - host: websats3.westus2.cloudapp.azure.com
-      http:
-        paths:
-        - path: /
-          pathType: Prefix
-          backend:
-            service:
-              name: websats
-              port:
-                number: 80
+  - host: webplanes.westus2.cloudapp.azure.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: webplanes
+            port:
+              number: 80

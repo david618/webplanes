@@ -156,3 +156,8 @@ Used Microsoft Azure Storage Explorer to copy files from the pvc.
 
 Next time instead of downloading from s3 and unzipping; we should be able to just copy from this Storage Account to the Storage account pvc folder. 
 
+## nginx controller
+
+```
+helm -n webplanes install --set controller.ingressClass.name=webplanes nginx-webplanes oci://ghcr.io/nginxinc/charts/nginx-ingress
+```
