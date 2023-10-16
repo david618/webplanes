@@ -17,9 +17,12 @@ spec:
     spec:
       containers:
         - name: webplanes
-          image: david62243/webplanes:v1.0
-          #command: ["sleep", "3650d"]
-          command: ["java", "-jar", "-DPLANES_NUM_DAYS_DATA=16", "-DPLANES_PATH_TO_DATA=/data/", "-Dserver.port=8080", "/opt/webplanes/webplanes-0.0.1-SNAPSHOT.jar"]
+          image: david62243/webplanes:v2.0
+          env:
+          - name: PLANES_NUM_DAYS_DATA
+            value: "16"
+          - name: PLANES_PATH_TO_DATA
+            value: "/data/" 
           imagePullPolicy: Always
           resources:
             limits:

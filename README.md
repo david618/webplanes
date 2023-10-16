@@ -5,11 +5,27 @@ Web Planes
 
 To build at command line  us build.sh.  This defines the required Environment Variables before running mvn install. 
 
+### Copy From S3
+
+mkdir s3
+cd s3
+aws s3 cp s3://esriplanes/lat88_csv/day0.tgz day0.tgz
+
+export PLANES_PATH_TO_DATA=/Users/davi5017/s3
+export PLANES_NUM_DAYS_DATA=1
+
+### Install Java 17
+
+```
+brew install openjdk@17
+```
+
+
 ### Running  
 
 
 ```
-java -jar -DPLANES_NUM_DAYS_DATA=16 -DPLANES_PATH_TO_DATA=/s3/esriplanes/lat88_csv2/ -Dserver.servlet.context-path=/webplanes -Dserver.port=8081 target/webplanes-0.0.1-SNAPSHOT.jar
+java -jar -DPLANES_NUM_DAYS_DATA=1 -DPLANES_PATH_TO_DATA=/Users/davi5017/s3/ target/webplanes-0.0.1-SNAPSHOT.jar
 ```
 
 The folder ``/s3/esriplanes/lat88_csv2/`` needs to contain day folders (e.g. 0, 1, 2, ...) 
@@ -49,7 +65,30 @@ The splitPlanesFiles.py script was then used to break the file into day / group 
 This approach allows this application to quickly return data with very little cpu/mem overhead. 
 
 
+### Running from Docker
+
+```
+docker run -it --rm -v ${HOME}/s3:/data --env=PLANES_NUM_DAYS_DATA=1 --env=PLANES_PATH_TO_DATA=/data/ david62243/webplanes:v2.0
+```
+
+```
+docker network ls
+```
+
+```
+docker ps
+```
+
+```
+docker inspect -f \
+'{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' \
+e721592417c2
+```
 
 
+```
+docker run -it --rm -v ${HOME}/s3:/data --env=PLANES_NUM_DAYS_DATA=1 --env=PLANES_PATH_TO_DATA=/data/ -p 8080:8080 --expose 8080 david62243/webplanes:v2.0
+```
 
+Then I was able to access from browser on localhost:8080
 
