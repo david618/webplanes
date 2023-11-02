@@ -37,7 +37,7 @@ fout=open(filename, "w")
 files=list(glob.glob('planes?????'))
 files.sort()
 for file in files:
-    print file
+    print(file)
     fin=open(file)
     previousPlaneID=-1
     for line in fin:

@@ -1,5 +1,6 @@
 ## webplanes
-Web Planes
+
+Web Planes is a SpringBoot https://spring.io/projects/spring-boot application. 
 
 ### Build 
 
@@ -20,9 +21,7 @@ export PLANES_NUM_DAYS_DATA=1
 brew install openjdk@17
 ```
 
-
 ### Running  
-
 
 ```
 java -jar -DPLANES_NUM_DAYS_DATA=1 -DPLANES_PATH_TO_DATA=/Users/davi5017/s3/ target/webplanes-0.0.1-SNAPSHOT.jar
@@ -34,7 +33,7 @@ Each day folder should have group folder 00 to 86.  These are the first two digi
 
 Each group folders will have data files 000 to 999.  The files contain the data to return for that second. 
 
-For example each file contains 1,000 csv lines.
+For example each file contains 1,000 csv lines. These are the position data for the 1,000 planes for that second of the day.
 
 ```
 head 000
@@ -50,8 +49,9 @@ head 000
 9,1596464014600,267.47,4840.25,107.04,10,"Corvallis Municipal Airport","Francisco de Miranda Airport",-1,-104.3388,38.30225
 ```
 
-The data was created using https://github.com/david618/planes
+### Data Creation
 
+The data was created using https://github.com/david618/planes
 
 
 ```
@@ -62,8 +62,16 @@ The createPlaneEventsFiles create files with 1,000,000 line each.
 
 The splitPlanesFiles.py script was then used to break the file into day / group folders / files. 
 
-This approach allows this application to quickly return data with very little cpu/mem overhead. 
+Serving the data from data files webplanes application to quickly return data with very little cpu/mem. 
 
+### Docker Build
+
+```
+export TAG=v2.0
+docker buildx build --platform=linux/amd64 -t david62243/webplanes:${TAG} .  
+```
+
+The Dockerfile using two stages.  Stage one does maven build; second stage uses jar file from build in the resulting Docker image.
 
 ### Running from Docker
 
