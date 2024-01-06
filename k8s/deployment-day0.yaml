@@ -1,0 +1,33 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webplanes-day0
+  labels:
+    app: webplanes-day0
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webplanes-day0
+  template:
+    metadata:
+      labels:
+        app: webplanes-day0
+    spec:
+      containers:
+        - name: webplanes
+          image: david62243/webplanes:v2.0-day0
+          env:
+          - name: PLANES_NUM_DAYS_DATA
+            value: "1"
+          - name: PLANES_PATH_TO_DATA
+            value: "/home/ubuntu/data/" 
+          imagePullPolicy: Always
+          resources:
+            limits:
+              cpu: '500m'
+              memory: 1Gi
+            requests:
+              cpu: '500m'
+              memory: 1Gi
