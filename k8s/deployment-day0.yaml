@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: webplanes
-          image: david62243/webplanes:v2.0-day0
+          image: david62243/webplanes:v2.0-day0-4000s
           env:
           - name: PLANES_NUM_DAYS_DATA
             value: "1"

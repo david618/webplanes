@@ -8,7 +8,7 @@ See Repo README Data Creation section for details on how planes data was created
 
 ## Download Day File from s3
 
-This folder contains unziped files s3://esriplanes/lat88_csv/day0.tgz 
+This folder contains unziped files s3://esriplanes/lat88_csv/day0.tgz
 
 There are 17 days of data on s3.  You can access using KEY AKIAYTUXJDCLVGDUNEWN.   You'll need to the access_key.
 
@@ -25,7 +25,7 @@ tar xvxzf day0.tgz ~/github/webplanes/data
 ```
 
 
-Each day is about 9.5G.  Including a full data results in an 4G image.  
+Each day is about 9.5G.  Including a full data results in an 4G image.
 
 
 Day Folder Structor
@@ -45,8 +45,53 @@ We could calculate positions on the fly; however, that would require more cpu/me
 
 
 
-The git repo is configured to not include this data.  Each day includes 86400 files one for each second of the day.  
+The git repo is configured to not include this data.  Each day includes 86400 files one for each second of the day.
 
 
-The day was created using https://github.com/david618/planes 
+The day was created using https://github.com/david618/planes
+
+The resulting docker image was about 10G in size (compressed to 4G)
+
+## About 1 hour loop of data
+
+Deleted folder 04 to 86
+
+Created Symbolic Links
+
+Using a script like
+
+```
+#!/usr/bin/env bash
+
+CNT=$1
+echo ${CNT}
+
+echo "ln -s 00 ${CNT}"
+ln -s 00 ${CNT}
+((CNT++))
+echo "ln -s 01 ${CNT}"
+ln -s 01 ${CNT}
+((CNT++))
+echo "ln -s 02 ${CNT}"
+ln -s 02 ${CNT}
+((CNT++))
+echo "ln -s 03 ${CNT}"
+ln -s 03 ${CNT}
+```
+
+Created folder 04 to 86 as symbolic links to day 00 to 03 over and over.
+
+In this case the data will loop every 4000 seconds (about 67 minutes)
+
+The 86 folder shows 1000 files only the first 400 will be used.
+
+The last loop of the day will be 40 minutes.
+
+```
+ls -ld *
+```
+
+The load time on Kubernetes is about 20 seconds for the 1G image compared to 4 minutes for 10G image.
+
+While the data loops it still should be sufficient for many tests.
 

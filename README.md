@@ -1,10 +1,10 @@
 ## webplanes
 
-Web Planes is a SpringBoot https://spring.io/projects/spring-boot application. 
+Web Planes is a SpringBoot https://spring.io/projects/spring-boot application.
 
-### Build 
+### Build
 
-To build at command line  us build.sh.  This defines the required Environment Variables before running mvn install. 
+To build at command line  us build.sh.  This defines the required Environment Variables before running mvn install.
 
 ### Copy From S3
 
@@ -21,17 +21,17 @@ export PLANES_NUM_DAYS_DATA=1
 brew install openjdk@17
 ```
 
-### Running  
+### Running
 
 ```
 java -jar -DPLANES_NUM_DAYS_DATA=1 -DPLANES_PATH_TO_DATA=/Users/davi5017/s3/ target/webplanes-0.0.1-SNAPSHOT.jar
 ```
 
-The folder ``/s3/esriplanes/lat88_csv2/`` needs to contain day folders (e.g. 0, 1, 2, ...) 
+The folder ``/s3/esriplanes/lat88_csv2/`` needs to contain day folders (e.g. 0, 1, 2, ...)
 
-Each day folder should have group folder 00 to 86.  These are the first two digits of the second into the day. 
+Each day folder should have group folder 00 to 86.  These are the first two digits of the second into the day.
 
-Each group folders will have data files 000 to 999.  The files contain the data to return for that second. 
+Each group folders will have data files 000 to 999.  The files contain the data to return for that second.
 
 For example each file contains 1,000 csv lines. These are the position data for the 1,000 planes for that second of the day.
 
@@ -58,17 +58,17 @@ The data was created using https://github.com/david618/planes
 java -cp target/planes.jar org.jennings.planes.CreatePlaneEventsFiles routes10000_4days.json 1000 /s3/esriplanes/lat88_csv2 planes now 1 1500000 10000000 txt 88 &
 ```
 
-The createPlaneEventsFiles create files with 1,000,000 line each.  
+The createPlaneEventsFiles create files with 1,000,000 line each.
 
-The splitPlanesFiles.py script was then used to break the file into day / group folders / files. 
+The splitPlanesFiles.py script was then used to break the file into day / group folders / files.
 
-Serving the data from data files webplanes application to quickly return data with very little cpu/mem. 
+Serving the data from data files webplanes application to quickly return data with very little cpu/mem.
 
 ### Docker Build
 
 ```
 export TAG=v2.0
-docker buildx build --platform=linux/amd64 -t david62243/webplanes:${TAG} .  
+docker buildx build --platform=linux/amd64 -t david62243/webplanes:${TAG} .
 ```
 
 The Dockerfile using two stages.  Stage one does maven build; second stage uses jar file from build in the resulting Docker image.
@@ -99,4 +99,5 @@ docker run -it --rm -v ${HOME}/s3:/data --env=PLANES_NUM_DAYS_DATA=1 --env=PLANE
 ```
 
 Then I was able to access from browser on localhost:8080
+
 
